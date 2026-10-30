@@ -4,21 +4,21 @@ Refonte du prototype MOTIF en monorepo TypeScript : storefront Next.js App Route
 
 ## Démarrage local
 
-Prérequis : Node.js 22.12+, npm et Docker Desktop.
+Prérequis : Node.js 22.12+, pnpm et Docker Desktop.
 
 ```powershell
 Copy-Item .env.example .env
 $mfaKey = node -e "console.log(require('node:crypto').randomBytes(32).toString('base64'))"
 Add-Content .env "MFA_ENCRYPTION_KEY=$mfaKey"
 docker compose up -d postgres
-npm install
-npm run db:generate
-npm run db:migrate
-npm run db:seed
-npm run dev
+pnpm install
+pnpm run db:generate
+pnpm run db:migrate
+pnpm run db:seed
+pnpm run dev
 ```
 
-Le site démarre sur `http://localhost:3000`, l’API sur `http://localhost:4000/api`. Avant d’exposer quoi que ce soit, remplacer chaque valeur locale et brancher les services externes requis.
+Le site démarre sur `http://localhost:3000`, l’API sur `http://localhost:4000/api` et PostgreSQL est publié sur le port hôte `55432` (modifiable via `POSTGRES_HOST_PORT`). Le port interne du conteneur reste `5432`. Avant d’exposer quoi que ce soit, remplacer chaque valeur locale et brancher les services externes requis.
 
 ## Architecture
 

@@ -3,10 +3,20 @@ generator client {
   output   = "../src/generated/prisma"
 }
 
-datasource db { provider = "postgresql" }
+datasource db {
+  provider = "postgresql"
+}
 
-enum Role { CUSTOMER ADMIN }
-enum OfferKind { AFFILIATE DROPSHIP SERVICE }
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum OfferKind {
+  AFFILIATE
+  DROPSHIP
+  SERVICE
+}
 
 model User {
   id                String    @id @default(uuid()) @db.Uuid

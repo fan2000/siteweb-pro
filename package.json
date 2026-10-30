@@ -1,0 +1,20 @@
+{
+  "name": "motif-marketplace",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": ["apps/web", "apps/api"],
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c blue,green \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:web": "npm --workspace @motif/web run dev",
+    "dev:api": "npm --workspace @motif/api run start:dev",
+    "build": "npm run build --workspace @motif/api && npm run build --workspace @motif/web",
+    "lint": "npm run lint --workspace @motif/web",
+    "test": "node --test",
+    "db:generate": "npm --workspace @motif/api run prisma:generate",
+    "db:migrate": "npm --workspace @motif/api run prisma:migrate",
+    "db:seed": "npm --workspace @motif/api run prisma:seed"
+  },
+  "devDependencies": { "concurrently": "^9.2.1" },
+  "engines": { "node": ">=22.12" }
+}

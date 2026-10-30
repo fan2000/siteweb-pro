@@ -10,7 +10,7 @@ Prérequis : Node.js 22.12+, pnpm et Docker Desktop.
 Copy-Item .env.example .env
 $mfaKey = node -e "console.log(require('node:crypto').randomBytes(32).toString('base64'))"
 Add-Content .env "MFA_ENCRYPTION_KEY=$mfaKey"
-docker compose up -d postgres
+docker compose up -d postgres mailpit
 pnpm install
 pnpm run db:generate
 pnpm run db:migrate
@@ -18,7 +18,7 @@ pnpm run db:seed
 pnpm run dev
 ```
 
-Le site démarre sur `http://localhost:3000`, l’API sur `http://localhost:4000/api` et PostgreSQL est publié sur le port hôte `55432` (modifiable via `POSTGRES_HOST_PORT`). Le port interne du conteneur reste `5432`. Avant d’exposer quoi que ce soit, remplacer chaque valeur locale et brancher les services externes requis.
+Le site démarre sur `http://localhost:3003`, l’API sur `http://localhost:4000/api` et PostgreSQL est publié sur le port hôte `55432` (modifiable via `POSTGRES_HOST_PORT`). Le port interne du conteneur reste `5432`. En développement, Mailpit capture les e-mails SMTP sur le port `1025`; consultez la boîte de réception sur `http://localhost:8025`. Avant d’exposer quoi que ce soit, remplacer chaque valeur locale et brancher les services externes requis.
 
 ## Architecture
 
@@ -30,9 +30,11 @@ Le site démarre sur `http://localhost:3000`, l’API sur `http://localhost:4000
 
 ## Authentification
 
-L’API utilise Argon2id, vérification d’adresse à jeton unique, sessions aléatoires persistées sous forme de hash et cookie `HttpOnly`, TOTP avec application d’authentification, codes de récupération hashés à usage unique, validation stricte et limitation de débit renforcée sur connexion/inscription. Les mutations authentifiées vérifient l’origine et un jeton CSRF associé à la session. L’activation du MFA exige une nouvelle confirmation du mot de passe; il est exigé à la connexion une fois activé. Le secret TOTP est chiffré en AES-256-GCM via `MFA_ENCRYPTION_KEY`. En production, cette clé doit être gérée hors de la base, avec un processus de rotation, et les appels de MFA doivent être protégés par TLS.
+L’API utilise Argon2id, vérification d’adresse à jeton unique, sessions aléatoires persistées sous forme de hash et cookie `HttpOnly`, TOTP avec application d’authentification, codes de récupération hashés à usage unique, validation stricte et limitation de débit renforcée sur connexion/inscription. Après vérification de la session, la connexion redirige directement vers l’accueil. La page `/compte`, accessible depuis le lien de navigation, vérifie l’accès, affiche l’état MFA et permet de rejoindre le catalogue ou la sécurité du compte. Le lien de navigation reflète aussi l’état de la session. Les mutations authentifiées vérifient l’origine et un jeton CSRF associé à la session. L’activation du MFA exige une nouvelle confirmation du mot de passe; il est exigé à la connexion une fois activé. Le secret TOTP est chiffré en AES-256-GCM via `MFA_ENCRYPTION_KEY`. En production, cette clé doit être gérée hors de la base, avec un processus de rotation, et les appels de MFA doivent être protégés par TLS.
 
-La livraison d’e-mails transactionnels n’est pas configurée ici. En développement seulement, le lien de vérification apparaît dans le journal de l’API. En production, ajouter un fournisseur mail, des limites dédiées par IP/compte, monitoring, révocation de toutes les sessions, récupération de compte et politique de déploiement TLS avant d’activer l’inscription. Les favoris restent pour le moment dans l’état client et ne sont pas liés aux comptes.
+À la première inscription, l’API crée un compte non vérifié et envoie un lien à usage unique valable 30 minutes. Si le lien expire, la page de confirmation permet d’en demander un nouveau avec `/api/auth/resend-verification`; l’interface renvoie le même message que le compte existe ou non, et invalide les anciens liens lors d’un renvoi. Le jeton brut n’est ni renvoyé par l’API ni écrit dans les journaux; seule son empreinte est stockée. En développement, Mailpit permet de consulter le message capturé sur `http://localhost:8025`. En production, configurez `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` et `MAIL_FROM` avec les identifiants d’un fournisseur transactionnel, et définissez `WEB_ORIGIN` sur l’origine HTTPS du site. L’inscription échoue proprement si l’e-mail ne peut pas être livré; l’API tente alors de supprimer le compte uniquement s’il est encore non vérifié. Les favoris restent pour le moment dans l’état client et ne sont pas liés aux comptes.
+
+En développement, le client aligne l’hôte de l’API sur celui du site pour garder les cookies de session sur le même site (`localhost` ou `127.0.0.1`). La page de connexion confirme ensuite la session auprès de l’API avant d’annoncer que la connexion a réussi.
 
 ## Limites commerciales visibles
 

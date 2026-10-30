@@ -1,0 +1,157 @@
+[web] npm notice run motif-marketplace@1.0.0 dev:web
+[web] npm notice run npm --workspace @motif/web run dev
+[api] npm notice run motif-marketplace@1.0.0 dev:api
+[api] npm notice run npm --workspace @motif/api run start:dev
+[api] npm notice run @motif/api@1.0.0 start:dev
+[api] npm notice run nest start --watch
+[web] npm notice run @motif/web@1.0.0 dev
+[web] npm notice run next dev --port 3003
+[web] ▲ Next.js 16.4.3 (Turbopack)
+[web] - Local:         http://localhost:3003
+[web] - Network:       http://192.168.1.4:3003
+[web] ✓ Ready in 2.1s
+[web] ◇ injected env (14) from ..\..\.env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+[web] ✓ Running next.config.ts took 170ms
+[api] [2J[3J[H[[90m20:46:54[0m] Starting compilation in watch mode...
+[api] 
+[web] 
+[api] [[90m20:47:26[0m] Found 0 errors. Watching for file changes.
+[api] 
+[api] [Nest] 30868  - 30/10/2026 20:47:31     LOG [NestFactory] Starting Nest application...
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [InstanceLoader] PrismaModule dependencies initialized +273ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [InstanceLoader] ConfigHostModule dependencies initialized +6ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [InstanceLoader] ThrottlerModule dependencies initialized +1ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [InstanceLoader] ConfigModule dependencies initialized +15ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [InstanceLoader] CatalogModule dependencies initialized +1ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [InstanceLoader] AppModule dependencies initialized +2ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [InstanceLoader] AuthModule dependencies initialized +13ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [RoutesResolver] AppController {/api}: +223ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [RouterExplorer] Mapped {/api, GET} route +27ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [RoutesResolver] AuthController {/api/auth}: +1ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [RouterExplorer] Mapped {/api/auth/register, POST} route +8ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [RouterExplorer] Mapped {/api/auth/resend-verification, POST} route +3ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [RouterExplorer] Mapped {/api/auth/verify-email, POST} route +2ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [RouterExplorer] Mapped {/api/auth/login, POST} route +4ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [RouterExplorer] Mapped {/api/auth/session, POST} route +6ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [RouterExplorer] Mapped {/api/auth/logout, POST} route +3ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [RouterExplorer] Mapped {/api/auth/mfa/setup, POST} route +7ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [RouterExplorer] Mapped {/api/auth/mfa/enable, POST} route +5ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [RoutesResolver] CatalogController {/api/offers}: +1ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [RouterExplorer] Mapped {/api/offers, GET} route +7ms
+[api] [Nest] 30868  - 30/10/2026 20:47:32     LOG [NestApplication] Nest application successfully started +351ms
+[web]  GET /connexion 200 in 1185ms (next.js: 565ms, application-code: 620ms)
+[web]  GET / 200 in 868ms (next.js: 32ms, application-code: 836ms)
+[web]  GET /connexion 200 in 103ms (next.js: 4ms, application-code: 98ms)
+[web]  GET /connexion 200 in 187ms (next.js: 11ms, application-code: 176ms)
+[web]  GET / 200 in 1106ms (next.js: 7ms, application-code: 1100ms)
+[web] [browser] Image with src "http://localhost:3003/assets/creative.svg" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[web] [browser] Image with src "http://localhost:3003/assets/security.svg" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[web]  GET /connexion 200 in 185ms (next.js: 16ms, application-code: 170ms)
+[web] ✓ Compiled in 342ms
+[web]  GET /connexion 200 in 190ms (next.js: 12ms, application-code: 178ms)
+[web] ✓ Compiled in 97ms
+[web]  GET /connexion 200 in 130ms (next.js: 6ms, application-code: 125ms)
+[web] ✓ Compiled in 16ms
+[web] ✓ Compiled in 18ms
+[api] [2J[3J[H[[90m20:57:25[0m] File change detected. Starting incremental compilation...
+[api] 
+[api] [[90m20:57:27[0m] Found 0 errors. Watching for file changes.
+[api] 
+[api] [2J[3J[H[[90m20:57:29[0m] File change detected. Starting incremental compilation...
+[api] 
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [NestFactory] Starting Nest application...
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [InstanceLoader] PrismaModule dependencies initialized +55ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [InstanceLoader] ConfigHostModule dependencies initialized +1ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [InstanceLoader] ThrottlerModule dependencies initialized +0ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [InstanceLoader] ConfigModule dependencies initialized +5ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [InstanceLoader] CatalogModule dependencies initialized +0ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [InstanceLoader] AppModule dependencies initialized +0ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [InstanceLoader] AuthModule dependencies initialized +19ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [RoutesResolver] AppController {/api}: +78ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [RouterExplorer] Mapped {/api, GET} route +8ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [RoutesResolver] AuthController {/api/auth}: +1ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [RouterExplorer] Mapped {/api/auth/register, POST} route +4ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [RouterExplorer] Mapped {/api/auth/resend-verification, POST} route +2ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [RouterExplorer] Mapped {/api/auth/verify-email, POST} route +2ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [RouterExplorer] Mapped {/api/auth/login, POST} route +1ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [RouterExplorer] Mapped {/api/auth/session, POST} route +1ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [RouterExplorer] Mapped {/api/auth/logout, POST} route +0ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [RouterExplorer] Mapped {/api/auth/mfa/setup, POST} route +1ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [RouterExplorer] Mapped {/api/auth/mfa/enable, POST} route +1ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [RoutesResolver] CatalogController {/api/offers}: +1ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [RouterExplorer] Mapped {/api/offers, GET} route +1ms
+[api] [Nest] 40096  - 30/10/2026 20:57:31     LOG [NestApplication] Nest application successfully started +136ms
+[api] [[90m20:57:33[0m] Found 0 errors. Watching for file changes.
+[api] 
+[api] [2J[3J[H[[90m20:57:34[0m] File change detected. Starting incremental compilation...
+[api] 
+[api] [[90m20:57:38[0m] Found 0 errors. Watching for file changes.
+[api] 
+[api] [2J[3J[H[[90m20:57:39[0m] File change detected. Starting incremental compilation...
+[api] 
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [NestFactory] Starting Nest application...
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [InstanceLoader] PrismaModule dependencies initialized +67ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [InstanceLoader] ConfigHostModule dependencies initialized +1ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [InstanceLoader] ThrottlerModule dependencies initialized +0ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [InstanceLoader] ConfigModule dependencies initialized +8ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [InstanceLoader] CatalogModule dependencies initialized +2ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [InstanceLoader] AppModule dependencies initialized +1ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [InstanceLoader] AuthModule dependencies initialized +24ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [RoutesResolver] AppController {/api}: +101ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [RouterExplorer] Mapped {/api, GET} route +9ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [RoutesResolver] AuthController {/api/auth}: +2ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [RouterExplorer] Mapped {/api/auth/register, POST} route +12ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [RouterExplorer] Mapped {/api/auth/resend-verification, POST} route +1ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [RouterExplorer] Mapped {/api/auth/verify-email, POST} route +7ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [RouterExplorer] Mapped {/api/auth/login, POST} route +2ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [RouterExplorer] Mapped {/api/auth/session, POST} route +3ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [RouterExplorer] Mapped {/api/auth/logout, POST} route +3ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [RouterExplorer] Mapped {/api/auth/mfa/setup, POST} route +2ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [RouterExplorer] Mapped {/api/auth/mfa/enable, POST} route +5ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [RoutesResolver] CatalogController {/api/offers}: +1ms
+[api] [Nest] 48712  - 30/10/2026 20:57:44     LOG [RouterExplorer] Mapped {/api/offers, GET} route +1ms
+[api] [Nest] 48712  - 30/10/2026 20:57:45     LOG [NestApplication] Nest application successfully started +299ms
+[api] [[90m20:57:45[0m] Found 0 errors. Watching for file changes.
+[api] 
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [NestFactory] Starting Nest application...
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [InstanceLoader] PrismaModule dependencies initialized +32ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [InstanceLoader] ConfigHostModule dependencies initialized +0ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [InstanceLoader] ThrottlerModule dependencies initialized +0ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [InstanceLoader] ConfigModule dependencies initialized +3ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [InstanceLoader] CatalogModule dependencies initialized +0ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [InstanceLoader] AppModule dependencies initialized +0ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [InstanceLoader] AuthModule dependencies initialized +6ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [RoutesResolver] AppController {/api}: +69ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [RouterExplorer] Mapped {/api, GET} route +5ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [RoutesResolver] AuthController {/api/auth}: +1ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [RouterExplorer] Mapped {/api/auth/register, POST} route +1ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [RouterExplorer] Mapped {/api/auth/resend-verification, POST} route +1ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [RouterExplorer] Mapped {/api/auth/verify-email, POST} route +0ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [RouterExplorer] Mapped {/api/auth/login, POST} route +1ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [RouterExplorer] Mapped {/api/auth/session, POST} route +0ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [RouterExplorer] Mapped {/api/auth/logout, POST} route +0ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [RouterExplorer] Mapped {/api/auth/mfa/setup, POST} route +1ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [RouterExplorer] Mapped {/api/auth/mfa/enable, POST} route +0ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [RoutesResolver] CatalogController {/api/offers}: +1ms
+[api] [Nest] 41664  - 30/10/2026 20:57:49     LOG [RouterExplorer] Mapped {/api/offers, GET} route +1ms
+[api] [Nest] 41664  - 30/10/2026 20:57:50     LOG [NestApplication] Nest application successfully started +152ms
+[web] ✓ Compiled in 31ms
+[web]  GET /compte 200 in 194ms (next.js: 62ms, application-code: 132ms)
+[web]   Turbopack has seen frequent file updates and is waiting for the filesystem to settle (0.5s elapsed so far; last modified: "\\\\?\\C:\\IA_ENV_LAB\\siteweb-pro\\node_modules\\.pnpm-task-run-state-v1\\start.lock").
+[web] [browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[web]  GET / 200 in 246ms (next.js: 13ms, application-code: 233ms)
+[web] [browser] Image with src "http://localhost:3003/assets/creative.svg" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[web] [browser] Image with src "http://localhost:3003/assets/security.svg" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[web]  GET /compte 200 in 63ms (next.js: 7ms, application-code: 56ms)
+[web]  GET /compte/securite 200 in 83ms (next.js: 26ms, application-code: 58ms)
+[web]  GET /connexion 200 in 81ms (next.js: 16ms, application-code: 65ms)
+[web]  GET /compte 200 in 57ms (next.js: 4ms, application-code: 53ms)
+[web]  GET / 200 in 103ms (next.js: 6ms, application-code: 97ms)
+[web]  GET /compte 200 in 37ms (next.js: 3ms, application-code: 35ms)
+[web]  GET /connexion 200 in 44ms (next.js: 4ms, application-code: 39ms)
+[web]  GET /compte 200 in 45ms (next.js: 6ms, application-code: 39ms)
+[web]  GET / 200 in 181ms (next.js: 7ms, application-code: 174ms)
+[web]  GET /compte 200 in 47ms (next.js: 5ms, application-code: 42ms)
+[web]  GET /connexion 200 in 52ms (next.js: 9ms, application-code: 43ms)
+[web]  GET /compte 200 in 53ms (next.js: 4ms, application-code: 49ms)
+[web] ✓ Compiled in 21ms

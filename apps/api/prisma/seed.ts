@@ -1,6 +1,11 @@
+import dotenv from 'dotenv';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../src/generated/prisma/client.js';
 import offers from '../../../data/offers.json' with { type: 'json' };
+
+dotenv.config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../../../.env') });
 
 const url = process.env.DATABASE_URL;
 if (!url) throw new Error('DATABASE_URL must be set');

@@ -1,4 +1,4 @@
-import { BadRequestException, Body, ConflictException, Controller, ForbiddenException, HttpCode, HttpStatus, Injectable, Module, Post, Req, Res, UnauthorizedException, CanActivate, ExecutionContext, UseGuards, ServiceUnavailableException } from '@nestjs/common';
+import { BadRequestException, Body, ConflictException, Controller, ForbiddenException, HttpCode, HttpStatus, Injectable, Logger, Module, Post, Req, Res, UnauthorizedException, CanActivate, ExecutionContext, UseGuards, ServiceUnavailableException } from '@nestjs/common';
 import { IsEmail, IsOptional, IsString, Length, MaxLength, MinLength } from 'class-validator';
 import { Throttle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
@@ -6,8 +6,11 @@ import { randomBytes, createHash, timingSafeEqual, createCipheriv, createDeciphe
 import * as argon2 from 'argon2';
 import { generateSecret, generateURI, verify } from 'otplib';
 import { PrismaService } from '../../database/prisma.module.js';
+import { isAllowedWebOrigin } from '../../config/web-origin.js';
+import { MailService } from './mail.service.js';
 
 class RegisterDto { @IsEmail() @MaxLength(254) email!: string; @IsString() @MinLength(14) @MaxLength(128) password!: string; }
+class ResendVerificationDto { @IsEmail() @MaxLength(254) email!: string; }
 class LoginDto { @IsEmail() @MaxLength(254) email!: string; @IsString() @MinLength(14) @MaxLength(128) password!: string; @IsOptional() @IsString() @Length(6, 32) code?: string; }
 class MfaSetupDto { @IsString() @MinLength(14) @MaxLength(128) password!: string; }
 class MfaEnableDto extends MfaSetupDto { @IsString() @Length(6, 8) code!: string; }
@@ -15,10 +18,30 @@ class VerificationDto { @IsString() @Length(20, 100) token!: string; }
 
 @Injectable()
 class AuthService {
-  constructor(private readonly db: PrismaService) {}
+  private readonly logger = new Logger(AuthService.name);
+  constructor(private readonly db: PrismaService, private readonly mail: MailService) {}
   private readonly dummyPasswordHash = argon2.hash('motif-invalid-credential-sentinel', { type: argon2.argon2id, memoryCost: 19456, timeCost: 2, parallelism: 1 });
   private hash(value: string) { return createHash('sha256').update(value).digest('hex'); }
   private get sessionCookie() { return process.env.NODE_ENV === 'production' ? '__Host-motif_session' : 'motif_session'; }
+  private verificationOrigin() {
+    const configured = process.env.WEB_ORIGIN;
+    if (!configured) throw new ServiceUnavailableException('WEB_ORIGIN must be set');
+    let origin: URL;
+    try {
+      origin = new URL(configured);
+    } catch {
+      throw new ServiceUnavailableException('WEB_ORIGIN must be a valid site origin');
+    }
+    if (origin.username || origin.password || origin.pathname !== '/' || origin.search || origin.hash || !['http:', 'https:'].includes(origin.protocol) || (process.env.NODE_ENV === 'production' && origin.protocol !== 'https:')) {
+      throw new ServiceUnavailableException('WEB_ORIGIN must be an HTTPS origin in production');
+    }
+    return origin;
+  }
+  private verificationUrl(token: string) {
+    const url = new URL('/verification', this.verificationOrigin());
+    url.hash = new URLSearchParams({ token }).toString();
+    return url.toString();
+  }
   private mfaKey() {
     const key = Buffer.from(process.env.MFA_ENCRYPTION_KEY ?? '', 'base64');
     if (key.length !== 32) throw new ServiceUnavailableException('MFA_ENCRYPTION_KEY must be a base64-encoded 32-byte key');
@@ -37,14 +60,47 @@ class AuthService {
     return Buffer.concat([decipher.update(Buffer.from(ciphertext, 'base64url')), decipher.final()]).toString('utf8');
   }
   async register(email: string, password: string) {
-    if (process.env.NODE_ENV !== 'development') throw new ServiceUnavailableException('Email verification service is not configured');
+    if (!this.mail.isConfigured) throw new ServiceUnavailableException('La livraison des e-mails n’est pas configurée.');
     const normalized = email.trim().toLowerCase();
-    if (await this.db.user.findUnique({ where: { email: normalized } })) throw new ConflictException('Unable to create account with these details');
+    if (await this.db.user.findUnique({ where: { email: normalized } })) throw new ConflictException('Inscription impossible. Connectez-vous ou demandez un nouveau lien de confirmation.');
     const rawToken = randomBytes(32).toString('base64url');
     const user = await this.db.user.create({ data: { email: normalized, passwordHash: await argon2.hash(password, { type: argon2.argon2id, memoryCost: 19456, timeCost: 2, parallelism: 1 }), verificationTokens: { create: { tokenHash: this.hash(rawToken), expiresAt: new Date(Date.now() + 30 * 60_000) } } } });
-    // Development-only delivery aid; production requires a transactional email adapter.
-    if (process.env.NODE_ENV !== 'production') console.info(`MOTIF verification URL (development only): ${process.env.WEB_ORIGIN}/verification?token=${rawToken}`);
+    try {
+      await this.mail.sendVerificationEmail(normalized, this.verificationUrl(rawToken));
+    } catch {
+      try {
+        await this.db.user.deleteMany({
+          where: {
+            id: user.id,
+            emailVerifiedAt: null,
+            verificationTokens: { some: { tokenHash: this.hash(rawToken), consumedAt: null } },
+          },
+        });
+      } catch {
+        this.logger.error('Unable to clean up an unverified account after email delivery failed');
+      }
+      throw new ServiceUnavailableException('Impossible d’envoyer l’e-mail de vérification. Réessayez plus tard.');
+    }
     return { id: user.id, email: user.email, verification: 'pending' };
+  }
+  async resendVerification(email: string) {
+    if (!this.mail.isConfigured) throw new ServiceUnavailableException('La livraison des e-mails n’est pas configurée.');
+    const normalized = email.trim().toLowerCase();
+    const user = await this.db.user.findUnique({ where: { email: normalized }, select: { id: true, email: true, emailVerifiedAt: true } });
+    if (user && !user.emailVerifiedAt) {
+      const rawToken = randomBytes(32).toString('base64url');
+      const now = new Date();
+      await this.db.$transaction(async (tx) => {
+        await tx.verificationToken.updateMany({ where: { userId: user.id, consumedAt: null }, data: { consumedAt: now } });
+        await tx.verificationToken.create({ data: { userId: user.id, tokenHash: this.hash(rawToken), expiresAt: new Date(now.getTime() + 30 * 60_000) } });
+      });
+      try {
+        await this.mail.sendVerificationEmail(user.email, this.verificationUrl(rawToken));
+      } catch {
+        this.logger.warn('Verification email could not be resent');
+      }
+    }
+    return { message: 'Si un compte en attente correspond à cette adresse, un nouveau lien a été envoyé. Sinon, essayez de vous connecter.' };
   }
   async login(email: string, password: string, code: string | undefined, req: Request, res: Response) {
     const user = await this.db.user.findUnique({ where: { email: email.trim().toLowerCase() } });
@@ -112,13 +168,18 @@ class AuthService {
   async verifyEmail(token: string) {
     if (!token || token.length > 100) throw new BadRequestException();
     const now = new Date();
-    await this.db.$transaction(async (tx) => {
+    const result = await this.db.$transaction(async (tx) => {
       const consumed = await tx.verificationToken.updateMany({ where: { tokenHash: this.hash(token), consumedAt: null, expiresAt: { gt: now } }, data: { consumedAt: now } });
-      if (consumed.count !== 1) throw new BadRequestException('Lien invalide ou expiré');
+      if (consumed.count !== 1) {
+        const existing = await tx.verificationToken.findUnique({ where: { tokenHash: this.hash(token) }, select: { user: { select: { emailVerifiedAt: true } } } });
+        if (existing?.user.emailVerifiedAt) return { alreadyVerified: true };
+        throw new BadRequestException('Lien invalide ou expiré');
+      }
       const tokenRecord = await tx.verificationToken.findUniqueOrThrow({ where: { tokenHash: this.hash(token) } });
       await tx.user.update({ where: { id: tokenRecord.userId }, data: { emailVerifiedAt: now } });
+      return { alreadyVerified: false };
     });
-    return { verified: true };
+    return { verified: true, alreadyVerified: result.alreadyVerified };
   }
 }
 
@@ -130,7 +191,7 @@ class AuthCsrfGuard implements CanActivate {
     const expectedOrigin = process.env.WEB_ORIGIN;
     const sessionToken = req.cookies?.[process.env.NODE_ENV === 'production' ? '__Host-motif_session' : 'motif_session'];
     const token = req.headers['x-csrf-token'];
-    if (!expectedOrigin || req.headers.origin !== expectedOrigin || typeof sessionToken !== 'string' || typeof token !== 'string') throw new ForbiddenException('Requête refusée');
+    if (!expectedOrigin || !isAllowedWebOrigin(req.headers.origin) || typeof sessionToken !== 'string' || typeof token !== 'string') throw new ForbiddenException('Requête refusée');
     const session = await this.db.session.findUnique({ where: { tokenHash: createHash('sha256').update(sessionToken).digest('hex') } });
     const actualHash = createHash('sha256').update(token).digest();
     const expectedHash = session ? Buffer.from(session.csrfHash, 'hex') : Buffer.alloc(actualHash.length);
@@ -142,7 +203,7 @@ class AuthCsrfGuard implements CanActivate {
 class SameOriginGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const req = context.switchToHttp().getRequest<Request>();
-    if (req.headers.origin !== process.env.WEB_ORIGIN || !req.is('application/json')) throw new ForbiddenException('Requête refusée');
+    if (!isAllowedWebOrigin(req.headers.origin) || !req.is('application/json')) throw new ForbiddenException('Requête refusée');
     return true;
   }
 }
@@ -151,6 +212,7 @@ class SameOriginGuard implements CanActivate {
 class AuthController {
   constructor(private readonly auth: AuthService) {}
   @Post('register') @UseGuards(SameOriginGuard) @Throttle({ default: { limit: 3, ttl: 60000 } }) register(@Body() dto: RegisterDto) { return this.auth.register(dto.email, dto.password); }
+  @Post('resend-verification') @UseGuards(SameOriginGuard) @Throttle({ default: { limit: 3, ttl: 60000 } }) resendVerification(@Body() dto: ResendVerificationDto) { return this.auth.resendVerification(dto.email); }
   @Post('verify-email') @UseGuards(SameOriginGuard) @Throttle({ default: { limit: 5, ttl: 60000 } }) verify(@Body() dto: VerificationDto) { return this.auth.verifyEmail(dto.token); }
   @Post('login') @UseGuards(SameOriginGuard) @Throttle({ default: { limit: 5, ttl: 60000 } }) @HttpCode(HttpStatus.OK) login(@Body() dto: LoginDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) { return this.auth.login(dto.email, dto.password, dto.code, req, res); }
   @Post('session') @HttpCode(HttpStatus.OK) session(@Req() req: Request) { return this.auth.current(req); }
@@ -159,5 +221,5 @@ class AuthController {
   @Post('mfa/enable') @UseGuards(AuthCsrfGuard) enable(@Req() req: Request, @Body() dto: MfaEnableDto) { return this.auth.enableMfa(req, dto.password, dto.code); }
 }
 
-@Module({ controllers: [AuthController], providers: [AuthService, AuthCsrfGuard] })
+@Module({ controllers: [AuthController], providers: [AuthService, AuthCsrfGuard, MailService] })
 export class AuthModule {}

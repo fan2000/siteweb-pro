@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Catalog from '@/components/catalog';
+import { AccountLink } from '@/components/account-link';
 
 const offers = [
   { id:'audio-studio-01', name:'Casque Studio Form', category:'Audio', kind:'Affiliation', price:189, image:'/assets/headphones.svg', description:'Un casque enveloppant pour les longues sessions d’écoute.', demo:true },
@@ -28,7 +29,7 @@ export default async function Home() {
   } catch { /* Keep the visibly marked local demo catalogue available while API/DB are starting. */ }
   return <main>
     <div className="announcement"><span className="live-dot"/> La bonne tech, au bon endroit. <span className="announcement-sep">|</span> Matériel · Logiciels · Services <a href="#catalogue">Explorer ↗</a></div>
-    <header className="header"><a className="brand" href="#top"><Image src="/assets/mark.svg" width={36} height={36} alt=""/> <span>MOTIF<span className="period">.</span></span></a><nav><a href="#catalogue">Explorer</a><a href="#parcours">Comment ça marche</a><a href="#services">Services numériques</a></nav><a className="login-link" href="/connexion">Connexion <span>↗</span></a></header>
+    <header className="header"><a className="brand" href="#top"><Image src="/assets/mark.svg" width={36} height={36} alt=""/> <span>MOTIF<span className="period">.</span></span></a><nav><a href="#catalogue">Explorer</a><a href="#parcours">Comment ça marche</a><a href="#services">Services numériques</a></nav><AccountLink/></header>
     <section className="hero" id="top"><div className="hero-copy"><div className="kicker"><span>LA TECH, MIEUX CHOISIE</span><i/> Édition Nº 01</div><h1>Tout ce qu’il<br/>vous faut.<br/><em>Rien de trop.</em></h1><p>Du bon matériel aux services numériques qui simplifient la vie. Découvrez, comparez et choisissez comment acheter.</p><div className="hero-actions"><a className="button primary" href="#catalogue">Explorer les trouvailles <span>↘</span></a><a className="button text-button" href="#services">Voir les services ↗</a></div><div className="hero-note"><span>✳</span><p>Des offres sélectionnées.<br/><b>À vous de décider.</b></p><strong>08<small>offres à explorer</small></strong></div></div><div className="hero-art"><div className="art-orbit orbit-one"/><div className="art-orbit orbit-two"/><span className="art-stamp">ACCESSOIRES<br/>& IDÉES FUTÉES<br/><small>01 — 08</small></span><Image className="hero-product" src="/assets/headphones.svg" width={430} height={380} alt="Illustration de casque audio" priority/><span className="hero-caption">CHOISI AVEC INTENTION · 2026</span></div></section>
     <div className="ticker" aria-label="Univers MOTIF"><div className="ticker-track">MATÉRIEL DE TOUS LES JOURS <b>✳</b> OUTILS NUMÉRIQUES <b>✳</b> PARCOURS TRANSPARENTS <b>✳</b> MATÉRIEL DE TOUS LES JOURS <b>✳</b> OUTILS NUMÉRIQUES <b>✳</b> PARCOURS TRANSPARENTS <b>✳</b></div></div>
     <Catalog offers={catalog}/>

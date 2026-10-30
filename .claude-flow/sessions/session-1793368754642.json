@@ -1,0 +1,14 @@
+{
+  "id": "session-1793368754642",
+  "startedAt": "2026-10-30T13:59:14.642Z",
+  "cwd": "C:\\IA_ENV_LAB\\siteweb-pro",
+  "context": {},
+  "metrics": {
+    "edits": 11,
+    "commands": 0,
+    "tasks": 0,
+    "errors": 0
+  },
+  "endedAt": "2026-10-30T16:00:35.733Z",
+  "duration": 7281092
+}
